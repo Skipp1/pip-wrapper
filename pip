@@ -1,0 +1,37 @@
+#! /usr/bin/env sh
+
+PY_VER="python310-"
+
+pkglist=""
+arglist=""
+for argv in ${@:2}; do 
+	if [ ${argv:0:1} != "-" ]; then 
+		pkglist="${pkglist} ${argv}"
+	else 
+		arglist="${arglist} ${argv}"
+	fi
+done 
+	
+	
+pythons_pip() {
+ 	/usr/bin/pip install $arglist $pkglist
+}
+
+if [ "$1" == "install" ]; then 
+	
+	read -p "Try to install from zypper? [Y/n]" yn
+	if [ "$yn" == "n" ]; then 
+		pythons_pip
+		exit
+	fi
+	
+	zypper_pkgs=""
+	for pkg in $pkglist; do 
+		zypper_pkgs="${zypper_pkgs} ${PY_VER}${pkg}"
+	done
+	
+	zypper in $arglist $zypper_pkgs
+	
+else
+ pythons_pip
+fi
